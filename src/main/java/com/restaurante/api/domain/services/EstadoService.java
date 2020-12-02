@@ -16,15 +16,15 @@ public class EstadoService {
 	@Autowired
 	private EstadoRepository estadoRepository;
 	
-	public Estado save(Estado estado) {
+	public Estado salvar(Estado estado) {
 		
 		return estadoRepository.save(estado);
 	}
 	
-	public void remove(Long id) {
+	public void remover(Long id) {
 		try {
 			
-			estadoRepository.remove(id);
+			estadoRepository.deleteById(id);
 			
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException(

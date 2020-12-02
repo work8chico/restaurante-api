@@ -1,5 +1,7 @@
 package com.restaurante.api.domain.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +20,17 @@ public class RestauranteService {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 	
-	public Restaurante save(Restaurante restaurante) {
+	public Restaurante salvar(Restaurante restaurante) {
 		
 		Long cozinhaId = restaurante.getCozinha().getId();
-		Cozinha cozinha = cozinhaRepository.find(cozinhaId);
+		Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
 		
-		if(cozinha == null) {
+		if(cozinha.isEmpty()) {
 			throw new EntidadeNaoEncontradaException(
 					String.format("Não existe cadastro da cozinha com o código %d", cozinhaId));
 		}
 		
-		restaurante.setCozinha(cozinha);
+		restaurante.setCozinha(cozinha.get());
 		
 		return restauranteRepository.save(restaurante);
 	}

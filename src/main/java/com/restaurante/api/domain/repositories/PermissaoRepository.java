@@ -1,16 +1,11 @@
 package com.restaurante.api.domain.repositories;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import com.restaurante.api.domain.model.Cidade;
-import com.restaurante.api.domain.model.FormaPagamento;
 import com.restaurante.api.domain.model.Permissao;
 
-public interface PermissaoRepository {
-	
-	List<Permissao> findAll();
-	Permissao find(Long id);
-	Permissao save(Permissao permissao);
-	void delete(Permissao permissao);
+@Repository
+public interface PermissaoRepository extends JpaRepository<Permissao, Long>{
 
 }

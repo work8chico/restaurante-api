@@ -1,5 +1,7 @@
 package com.restaurante.api.domain.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,24 +22,24 @@ public class CidadeService {
 	
 	@Autowired EstadoRepository estadoRepository;
 	
-	public Cidade save(Cidade cidade) {
+	public Cidade salvar(Cidade cidade) {
 		
 		Long estadoId = cidade.getEstado().getId();
-		Estado estado = estadoRepository.find(estadoId);
+		Optional<Estado> estado = estadoRepository.findById(estadoId);
 		
 		if(estado == null) {
 			throw new EntidadeNaoEncontradaException(
 					String.format("O Estado com o código %d não foi encontrado", estadoId));
 		}
 		
-		cidade.setEstado(estado);
+		cidade.setEstado(estado.get());
 		return cidadeRepository.save(cidade);
 		
 	}
 	
-	public void remove(Long id) {
+	public void remover(Long id) {
 		try {
-			cidadeRepository.remove(id);
+			cidadeRepository.deleteById(id);
 			
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException(

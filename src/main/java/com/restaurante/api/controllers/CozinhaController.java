@@ -1,6 +1,7 @@
 package com.restaurante.api.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,53 +28,55 @@ import com.restaurante.api.domain.services.CozinhaService;
 public class CozinhaController {
 
 	@Autowired
-	private CozinhaRepository repository;
+	private CozinhaRepository cozinhaRepository;
 
 	@Autowired
 	private CozinhaService cozinhaService;
 
 	@GetMapping
-	public ResponseEntity<List<Cozinha>> findAll() {
+	public ResponseEntity<List<Cozinha>> buscar() {
 
-		List<Cozinha> list = repository.findAll();
-
+		List<Cozinha> list = cozinhaRepository.findAll();
 		return ResponseEntity.ok().body(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Cozinha> findyById(@PathVariable Long id) {
+	public ResponseEntity<Cozinha> buscarPorId(@PathVariable Long id) {
 
-		Cozinha cozinha = repository.find(id);
+		Optional<Cozinha> cozinha = cozinhaRepository.findById(id);
 
-		if (cozinha != null) {
-			return ResponseEntity.ok(cozinha);
+		if (cozinha.isEmpty()) {
+			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.notFound().build();
+
+		return ResponseEntity.ok(cozinha.get());
+
 	}
 
-	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
-	public ResponseEntity<Cozinha> save(@RequestBody Cozinha cozinha) {
-
-		cozinha = cozinhaService.save(cozinha);
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity<Cozinha> salvar(@RequestBody Cozinha cozinha) {
+		cozinha = cozinhaService.salvar(cozinha);
 		return ResponseEntity.ok().body(cozinha);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Cozinha> update(@RequestBody Cozinha cozinha, @PathVariable Long id) {
+	public ResponseEntity<Cozinha> atualizar(@RequestBody Cozinha cozinha, @PathVariable Long id) {
 
-		Cozinha obj = repository.find(id);
+		Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(id);
 
-		if (obj != null) {
+		if (cozinhaAtual.isEmpty()) {
+			
+			Cozinha cozinhaSalva = cozinhaAtual.get();
+			BeanUtils.copyProperties(cozinha, cozinhaSalva, "id");
+			cozinhaSalva = cozinhaService.salvar(cozinhaSalva);
 
-			BeanUtils.copyProperties(cozinha, obj, "id");
-			obj = repository.save(obj);
-
-			return ResponseEntity.ok().body(obj);
-
+			return ResponseEntity.ok().body(cozinhaSalva);
+			
 		}
-
+		
 		return ResponseEntity.notFound().build();
+
 
 	}
 
@@ -82,7 +85,7 @@ public class CozinhaController {
 
 		try {
 
-			cozinhaService.remove(id);
+			cozinhaService.remover(id);
 			return ResponseEntity.noContent().build();
 
 		} catch (EntidadeNaoEncontradaException e) {

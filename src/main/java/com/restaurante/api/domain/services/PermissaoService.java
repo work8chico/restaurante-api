@@ -1,3 +1,4 @@
+
 package com.restaurante.api.domain.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,35 +8,29 @@ import org.springframework.stereotype.Service;
 
 import com.restaurante.api.domain.exceptions.EntidadeEmUsoException;
 import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
-import com.restaurante.api.domain.model.Cozinha;
-import com.restaurante.api.domain.repositories.CozinhaRepository;
+import com.restaurante.api.domain.model.Permissao;
+import com.restaurante.api.domain.repositories.PermissaoRepository;
 
 @Service
-public class CozinhaService {
+public class PermissaoService {
 
 	@Autowired
-	private CozinhaRepository cozinhaRepository;
-
-	public Cozinha salvar(Cozinha cozinha) {
-		return cozinhaRepository.save(cozinha);
+	private PermissaoRepository permissaoRepository;
+	
+	
+	public Permissao salvar(Permissao permissao) {
+		return permissaoRepository.save(permissao);
 	}
 	
-	public void remover(Long id) {
-		
+	public void remover(Long permissaoId) {
 		try {
-			
-			cozinhaRepository.deleteById(id);
-			
+			permissaoRepository.deleteById(permissaoId);
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntidadeNaoEncontradaException(
-					String.format("A cozinha com o código %d não foi encontrada!", id));
-			
+					String.format("Não foi possível encontrar a permissao de código %d !", permissaoId));
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
-					String.format("A cozinha com o código %d não pode ser removida pois está em uso no sistema", id));
+					String.format("Não foi possível excluir a permissao de código %d pois está em uso no sistema", permissaoId));
 		}
-		
-		
 	}
-
 }

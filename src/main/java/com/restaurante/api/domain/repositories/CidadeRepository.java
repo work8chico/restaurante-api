@@ -1,14 +1,11 @@
 package com.restaurante.api.domain.repositories;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.restaurante.api.domain.model.Cidade;
 
-public interface CidadeRepository {
-	
-	List<Cidade> findAll();
-	Cidade find(Long id);
-	Cidade save(Cidade cidade);
-	void remove(Long id);
+@Repository
+public interface CidadeRepository extends JpaRepository<Cidade, Long>{
 
 }

@@ -1,6 +1,7 @@
 package com.restaurante.api.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,41 +34,42 @@ public class EstadoController {
 	private EstadoService estadoService;
 
 	@GetMapping
-	public ResponseEntity<List<Estado>> findAll() {
+	public ResponseEntity<List<Estado>> buscar() {
 
 		List<Estado> estados = estadoRepository.findAll();
 		return ResponseEntity.ok().body(estados);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Estado> find(@PathVariable Long id) {
+	public ResponseEntity<Estado> buscarPorId(@PathVariable Long id) {
 
-		Estado estado = estadoRepository.find(id);
+		Optional<Estado> estado = estadoRepository.findById(id);
 
-		if (estado == null) {
+		if (estado.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 
-		return ResponseEntity.ok().body(estado);
+		return ResponseEntity.ok().body(estado.get());
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Estado> save(@RequestBody Estado estado) {
-		estado = estadoService.save(estado);
+	public ResponseEntity<Estado> salvar(@RequestBody Estado estado) {
+		estado = estadoService.salvar(estado);
 		return ResponseEntity.ok(estado);
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Estado> update(@RequestBody Estado estado, @PathVariable Long id) {
 
-		Estado estadoAtual = estadoRepository.find(id);
+		Optional<Estado> estadoAtual = estadoRepository.findById(id);
 
-		if (estadoAtual != null) {
-			BeanUtils.copyProperties(estado, estadoAtual, "id");
-			estadoAtual = estadoService.save(estadoAtual);
+		if (estadoAtual.isPresent()) {
+			Estado estadoSalvo = estadoAtual.get();
+			BeanUtils.copyProperties(estado, estadoSalvo, "id");
+			estadoSalvo = estadoService.salvar(estadoSalvo);
 
-			return ResponseEntity.ok(estadoAtual);
+			return ResponseEntity.ok(estadoSalvo);
 		}
 
 		return ResponseEntity.notFound().build();
@@ -78,7 +80,7 @@ public class EstadoController {
 
 		try {
 
-			estadoService.remove(id);
+			estadoService.remover(id);
 			return ResponseEntity.noContent().build();
 
 		} catch (EntidadeEmUsoException e) {
