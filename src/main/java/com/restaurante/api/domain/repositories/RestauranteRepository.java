@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.restaurante.api.domain.model.Restaurante;
@@ -13,6 +14,9 @@ import com.restaurante.api.domain.model.Restaurante;
 public interface RestauranteRepository
 		extends CustomJPARepository<Restaurante, Long>, RestauranteRepositoryQueries,
 		JpaSpecificationExecutor<Restaurante>{
+	
+	@Query("from Restaurante r join fetch r.cozinha")
+	List<Restaurante> findAll();
 	
 	List<Restaurante> findByTaxaFreteBetween(BigDecimal taxaInicial, BigDecimal taxaFinal);
 	List<Restaurante> findByTaxaFreteBetweenAndCozinhaNomeContains(BigDecimal taxaInicial, BigDecimal taxaFinal, String nome);

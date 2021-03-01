@@ -1,6 +1,7 @@
 package com.restaurante.api.controllers;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,7 +75,7 @@ public class RestauranteController {
 			if (restauranteAtual.isPresent()) {
 				
 				Restaurante restauranteSalvo = restauranteAtual.get();
-				BeanUtils.copyProperties(restaurante, restauranteSalvo, "id", "formasPagamento", "endereco");
+				BeanUtils.copyProperties(restaurante, restauranteSalvo, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
 				restauranteSalvo = restauranteService.salvar(restauranteSalvo);
 
 				return ResponseEntity.ok(restauranteSalvo);
