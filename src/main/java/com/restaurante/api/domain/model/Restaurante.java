@@ -47,7 +47,7 @@ public class Restaurante implements Serializable {
 	@Column(nullable = false)
 	private BigDecimal taxaFrete;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(nullable = false)
 	private Cozinha cozinha;
 	

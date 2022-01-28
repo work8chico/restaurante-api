@@ -21,7 +21,7 @@ import com.restaurante.api.domain.exceptions.EntidadeEmUsoException;
 import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
 import com.restaurante.api.domain.model.Estado;
 import com.restaurante.api.domain.repositories.EstadoRepository;
-import com.restaurante.api.domain.services.EstadoService;
+import com.restaurante.api.domain.services.CadastroEstadoService;
 
 @RestController
 @RequestMapping("/estados")
@@ -31,7 +31,7 @@ public class EstadoController {
 	private EstadoRepository estadoRepository;
 
 	@Autowired
-	private EstadoService estadoService;
+	private CadastroEstadoService cadastroEstado;
 
 	@GetMapping
 	public ResponseEntity<List<Estado>> buscar() {
@@ -40,55 +40,33 @@ public class EstadoController {
 		return ResponseEntity.ok().body(estados);
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Estado> buscarPorId(@PathVariable Long id) {
+	@GetMapping("/{estadoId}")
+	public Estado buscar(@PathVariable Long estadoId) {
 
-		Optional<Estado> estado = estadoRepository.findById(id);
+		return cadastroEstado.buscarOufalhar(estadoId);
 
-		if (estado.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
-
-		return ResponseEntity.ok().body(estado.get());
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Estado> salvar(@RequestBody Estado estado) {
-		estado = estadoService.salvar(estado);
-		return ResponseEntity.ok(estado);
+	public Estado salvar(@RequestBody Estado estado) {
+		return cadastroEstado.salvar(estado);
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Estado> update(@RequestBody Estado estado, @PathVariable Long id) {
+	@PutMapping("/{estadoId}")
+	public Estado atualizar(@RequestBody Estado estado, @PathVariable Long estadoId) {
 
-		Optional<Estado> estadoAtual = estadoRepository.findById(id);
+		Estado estadoAtual = cadastroEstado.buscarOufalhar(estadoId);
+		BeanUtils.copyProperties(estado, estadoAtual, "id");
 
-		if (estadoAtual.isPresent()) {
-			Estado estadoSalvo = estadoAtual.get();
-			BeanUtils.copyProperties(estado, estadoSalvo, "id");
-			estadoSalvo = estadoService.salvar(estadoSalvo);
+		return cadastroEstado.salvar(estadoAtual);
 
-			return ResponseEntity.ok(estadoSalvo);
-		}
-
-		return ResponseEntity.notFound().build();
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> remove(@PathVariable Long id) {
-
-		try {
-
-			estadoService.remover(id);
-			return ResponseEntity.noContent().build();
-
-		} catch (EntidadeEmUsoException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.notFound().build();
-		}
-
+	@DeleteMapping("/{estadoId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Long estadoId) {
+		cadastroEstado.remover(estadoId);
 	}
 
 }

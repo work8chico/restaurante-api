@@ -11,7 +11,7 @@ import com.restaurante.api.domain.model.Estado;
 import com.restaurante.api.domain.repositories.EstadoRepository;
 
 @Service
-public class EstadoService {
+public class CadastroEstadoService {
 
 	@Autowired
 	private EstadoRepository estadoRepository;
@@ -33,5 +33,11 @@ public class EstadoService {
 			throw new EntidadeEmUsoException(
 					String.format("O estado de código %d não pode ser excluído", id));
 		}
+	}
+	
+	public Estado buscarOufalhar(Long estadoId) {
+		return estadoRepository.findById(estadoId)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException(
+						String.format("O estado de código %d não foi encontrado", estadoId)));
 	}
 }

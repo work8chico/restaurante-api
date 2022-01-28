@@ -1,40 +1,39 @@
 package com.restaurante.api.domain.services;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
 import com.restaurante.api.domain.model.Cozinha;
 import com.restaurante.api.domain.model.Restaurante;
-import com.restaurante.api.domain.repositories.CozinhaRepository;
 import com.restaurante.api.domain.repositories.RestauranteRepository;
 
 @Service
-public class RestauranteService {
+public class CadastroRestauranteService {
 	
+	private static final String MSG_RESTAURANTE_NAO_ENCONTRADO
+		= "O restaurante de código %d não foi encontrado";
+
 	@Autowired
 	private RestauranteRepository restauranteRepository;
 	
 	@Autowired
-	private CozinhaRepository cozinhaRepository;
+	private CadastroCozinhaService cadastroCozinha;
 	
 	public Restaurante salvar(Restaurante restaurante) {
 		
 		Long cozinhaId = restaurante.getCozinha().getId();
-		Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
+		Cozinha cozinha = cadastroCozinha.buscarOufalhar(cozinhaId);
 		
-		if(cozinha.isEmpty()) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("Não existe cadastro da cozinha com o código %d", cozinhaId));
-		}
-		
-		restaurante.setCozinha(cozinha.get());
+		restaurante.setCozinha(cozinha);
 		
 		return restauranteRepository.save(restaurante);
 	}
 	
+	public Restaurante buscarOufalhar(Long restauranteId) {
+		return restauranteRepository.findById(restauranteId)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException(
+						String.format(MSG_RESTAURANTE_NAO_ENCONTRADO, restauranteId)));
+	}
 	
-
 }
