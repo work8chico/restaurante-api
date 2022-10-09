@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
+import com.restaurante.api.domain.exceptions.NegocioException;
 import com.restaurante.api.domain.model.Restaurante;
 import com.restaurante.api.domain.repositories.RestauranteRepository;
 import com.restaurante.api.domain.services.CadastroRestauranteService;
@@ -50,29 +52,43 @@ public class RestauranteController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Restaurante adicionar(@RequestBody Restaurante restaurante) {
 
-		return cadastroRestaurante.salvar(restaurante);
+		try {
+			return cadastroRestaurante.salvar(restaurante);
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
 
 	}
-	
+
 	@PutMapping("/{restauranteId}")
 	public Restaurante atualizar(@RequestBody Restaurante restaurante, @PathVariable Long restauranteId) {
 
 		Restaurante restauranteAtual = cadastroRestaurante.buscarOufalhar(restauranteId);
-		
-		BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco",
-						"dataCadastro", "produtos");
-		
-		return cadastroRestaurante.salvar(restauranteAtual);
+
+		BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro",
+				"produtos");
+
+		try {
+			return cadastroRestaurante.salvar(restauranteAtual);
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
 
 	}
-	
+
 	@PatchMapping("/{restauranteId}")
 	public Restaurante atualizarParcial(@PathVariable Long restauranteId, @RequestBody Map<String, Object> campos) {
 
 		Restaurante restauranteAtual = cadastroRestaurante.buscarOufalhar(restauranteId);
 
 		merge(campos, restauranteAtual);
-		return atualizar(restauranteAtual, restauranteId);
+
+		try {
+			return atualizar(restauranteAtual, restauranteId);
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
+
 	}
 
 //	@PostMapping
