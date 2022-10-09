@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
+import com.restaurante.api.domain.exceptions.NegocioException;
 import com.restaurante.api.domain.model.Cidade;
 import com.restaurante.api.domain.repositories.CidadeRepository;
 import com.restaurante.api.domain.services.CadastroCidadeService;
@@ -33,51 +34,43 @@ public class CidadeController {
 
 	@GetMapping
 	public List<Cidade> buscar() {
-		
+
 		return cidadeRepository.findAll();
 	}
 
 	@GetMapping("/{cidadeId}")
 	public Cidade buscar(@PathVariable Long cidadeId) {
-		
-		return cadastroCidade.buscarOuFalhar(cidadeId);
-		
-	}
 
-//	@PostMapping
-//	public ResponseEntity<?> salvar(@RequestBody Cidade cidade) {
-//
-//		try {
-//			Cidade cidadeSalva = cadastroCidade.salvar(cidade);
-//			return ResponseEntity.status(HttpStatus.CREATED).body(cidadeSalva);
-//
-//		} catch (EntidadeNaoEncontradaException e) {
-//			return ResponseEntity.badRequest().body(e.getMessage());
-//		} catch (IllegalArgumentException e) {
-//			return ResponseEntity.badRequest().body(e.getMessage());			
-//		}
-//
-//	}
+		return cadastroCidade.buscarOuFalhar(cidadeId);
+
+	}
 
 	@PostMapping
-	public Cidade salvar(@RequestBody Cidade cidade) {		
+	public Cidade salvar(@RequestBody Cidade cidade) {
+		try {
 			return cadastroCidade.salvar(cidade);
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
 	}
-	
-	
+
 	@PutMapping("/{cidadeId}")
 	public Cidade atualizar(@PathVariable Long cidadeId, @RequestBody Cidade cidade) {
-		
-		Cidade cidadeAtual = cadastroCidade.buscarOuFalhar(cidadeId);	
+
+		Cidade cidadeAtual = cadastroCidade.buscarOuFalhar(cidadeId);
 		BeanUtils.copyProperties(cidade, cidadeAtual, "id");
-		
-		return cadastroCidade.salvar(cidadeAtual);
-				
+
+		try {
+			return cadastroCidade.salvar(cidadeAtual);
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
+
 	}
 
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long id) {
-			cadastroCidade.remover(id);		
+		cadastroCidade.remover(id);
 	}
 }
