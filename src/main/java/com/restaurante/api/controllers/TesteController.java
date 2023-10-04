@@ -1,8 +1,5 @@
 package com.restaurante.api.controllers;
 
-import static com.restaurante.api.infraestructure.repositories.spec.RestauranteSpec.comFreteGratis;
-import static com.restaurante.api.infraestructure.repositories.spec.RestauranteSpec.comNomeSemelhante;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;

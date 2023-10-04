@@ -3,7 +3,6 @@ package com.restaurante.api.domain.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

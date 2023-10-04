@@ -1,7 +1,6 @@
 package com.restaurante.api.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.restaurante.api.domain.exceptions.EntidadeEmUsoException;
-import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
 import com.restaurante.api.domain.model.Estado;
 import com.restaurante.api.domain.repositories.EstadoRepository;
 import com.restaurante.api.domain.services.CadastroEstadoService;
