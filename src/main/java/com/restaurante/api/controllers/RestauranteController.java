@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restaurante.api.domain.exceptions.CozinhaNaoEncontradaException;
 import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
 import com.restaurante.api.domain.exceptions.NegocioException;
 import com.restaurante.api.domain.model.Restaurante;
@@ -54,8 +55,8 @@ public class RestauranteController {
 
 		try {
 			return cadastroRestaurante.salvar(restaurante);
-		} catch (EntidadeNaoEncontradaException e) {
-			throw new NegocioException(e.getMessage());
+		} catch (CozinhaNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 
 	}
@@ -70,8 +71,8 @@ public class RestauranteController {
 
 		try {
 			return cadastroRestaurante.salvar(restauranteAtual);
-		} catch (EntidadeNaoEncontradaException e) {
-			throw new NegocioException(e.getMessage());
+		} catch (CozinhaNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 
 	}
@@ -85,8 +86,8 @@ public class RestauranteController {
 
 		try {
 			return atualizar(restauranteAtual, restauranteId);
-		} catch (EntidadeNaoEncontradaException e) {
-			throw new NegocioException(e.getMessage());
+		} catch (CozinhaNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 
 	}

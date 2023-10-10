@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.restaurante.api.domain.exceptions.EntidadeEmUsoException;
-import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
+import com.restaurante.api.domain.exceptions.PermissaoNaoEncontradaException;
 import com.restaurante.api.domain.model.Permissao;
 import com.restaurante.api.domain.repositories.PermissaoRepository;
 import com.restaurante.api.domain.services.PermissaoService;
@@ -79,7 +79,7 @@ public class PermissaoController {
 			permissaoService.remover(permissaoId);
 			return ResponseEntity.noContent().build();
 
-		} catch (EntidadeNaoEncontradaException e) {
+		} catch (PermissaoNaoEncontradaException e) {
 			return ResponseEntity.notFound().build();
 
 		} catch (EntidadeEmUsoException e) {

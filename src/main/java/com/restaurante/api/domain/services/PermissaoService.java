@@ -7,7 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.restaurante.api.domain.exceptions.EntidadeEmUsoException;
-import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
+import com.restaurante.api.domain.exceptions.PermissaoNaoEncontradaException;
 import com.restaurante.api.domain.model.Permissao;
 import com.restaurante.api.domain.repositories.PermissaoRepository;
 
@@ -26,8 +26,7 @@ public class PermissaoService {
 		try {
 			permissaoRepository.deleteById(permissaoId);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("Não foi possível encontrar a permissao de código %d !", permissaoId));
+			throw new PermissaoNaoEncontradaException(permissaoId);
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
 					String.format("Não foi possível excluir a permissao de código %d pois está em uso no sistema", permissaoId));

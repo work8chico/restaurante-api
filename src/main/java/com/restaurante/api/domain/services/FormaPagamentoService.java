@@ -6,7 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.restaurante.api.domain.exceptions.EntidadeEmUsoException;
-import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
+import com.restaurante.api.domain.exceptions.FormaDePagamentoNaoEncontradaException;
 import com.restaurante.api.domain.model.FormaPagamento;
 import com.restaurante.api.domain.repositories.FormaPagamentoRepository;
 
@@ -25,8 +25,7 @@ public class FormaPagamentoService {
 			
 			formaPagamentoRepository.deleteById(formaPagamentoId);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("Forma de Pagamento com código %d não encontrada", formaPagamentoId));
+			throw new FormaDePagamentoNaoEncontradaException(formaPagamentoId);
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
 					String.format("Forma de pagamento com o código %d está em uso no sistema e não pode ser removida", formaPagamentoId));

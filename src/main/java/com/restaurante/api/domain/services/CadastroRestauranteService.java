@@ -3,7 +3,7 @@ package com.restaurante.api.domain.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.restaurante.api.domain.exceptions.EntidadeNaoEncontradaException;
+import com.restaurante.api.domain.exceptions.RestauranteNaoEncontradoException;
 import com.restaurante.api.domain.model.Cozinha;
 import com.restaurante.api.domain.model.Restaurante;
 import com.restaurante.api.domain.repositories.RestauranteRepository;
@@ -11,9 +11,6 @@ import com.restaurante.api.domain.repositories.RestauranteRepository;
 @Service
 public class CadastroRestauranteService {
 	
-	private static final String MSG_RESTAURANTE_NAO_ENCONTRADO
-		= "O restaurante de código %d não foi encontrado";
-
 	@Autowired
 	private RestauranteRepository restauranteRepository;
 	
@@ -32,8 +29,7 @@ public class CadastroRestauranteService {
 	
 	public Restaurante buscarOufalhar(Long restauranteId) {
 		return restauranteRepository.findById(restauranteId)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(
-						String.format(MSG_RESTAURANTE_NAO_ENCONTRADO, restauranteId)));
+				.orElseThrow(() -> new RestauranteNaoEncontradoException(restauranteId));
 	}
 	
 }
