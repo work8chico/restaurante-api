@@ -1,10 +1,9 @@
 package com.restaurante.api.exceptionhandler;
 
-import java.time.LocalDateTime;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -17,6 +16,18 @@ import com.restaurante.api.domain.exceptions.NegocioException;
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		
+		ProblemType problemType = ProblemType.MENSAGEM_INCOMPREENSIVEL;
+		String detail = "O corpo da requisição é inválido. Verifique se existe algum erro de sintaxe.";
+		
+		Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+	}
+	
 	@ExceptionHandler(EntidadeNaoEncontradaException.class)
 	public ResponseEntity<?> tratarEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex,
 			WebRequest request) {
@@ -26,13 +37,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		String detail = ex.getMessage();
 		
 		Problem problem = createProblemBuilder(status, problemType, detail).build();
-		
-//		Problem problem = Problem.builder()
-//				.status(status.value())
-//				.type("https://algafood.com.br/entidade-nao-encontrada")
-//				.title("Entidade não encontrada")
-//				.detail(ex.getMessage())
-//				.build();
 
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 
